@@ -16,14 +16,16 @@ csrf_detected_message = (
     "http://en.wikipedia.org/wiki/Cross-site_request_forgery for more "
     "information.")
 
+
 def authenticated_form(params):
     submitted_token = params.get(secure_form.token_key)
     return submitted_token is not None and \
         submitted_token == secure_form.authentication_token()
 
+
 def authenticate_form(func, *args, **kwargs):
     """Decorator for authenticating a form
-    
+
     This decorator uses an authorization token stored in the client's
     session for prevention of certain Cross-site request forgery (CSRF)
     attacks (See
@@ -31,7 +33,7 @@ def authenticate_form(func, *args, **kwargs):
     information).
 
     For use with the ``webhelpers.html.secure_form`` helper functions.
-    
+
     """
     request = get_pylons(args).request
     if authenticated_form(request.POST):
@@ -43,6 +45,7 @@ def authenticate_form(func, *args, **kwargs):
         abort(403, detail=csrf_detected_message)
 authenticate_form = decorator(authenticate_form)
 
+
 def https(*redirect_args, **redirect_kwargs):
     """Decorator to redirect to the SSL version of a page if not currently
     using HTTPS. Takes as arguments the parameters to pass to redirect_to.
@@ -52,7 +55,7 @@ def https(*redirect_args, **redirect_kwargs):
     Non-https POST requests are aborted (405 response code) by this decorator.
 
     Example:
-    
+
     .. code-block:: python
 
         @https('/pylons') # redirect to HTTPS /pylons
@@ -76,11 +79,11 @@ def https(*redirect_args, **redirect_kwargs):
             return func(*args, **kwargs)
         else:
             if request.method.upper() != 'POST':
-                redirect_kwargs['protocol'] = 'https' # ensure https
+                redirect_kwargs['protocol'] = 'https'  # ensure https
                 log.debug('Redirecting non-https request: %s to redirect '
                           'args: *%r, **%r', request.path_info, redirect_args,
                           redirect_kwargs)
                 redirect_to(*redirect_args, **redirect_kwargs)
             else:
-                abort(405, headers=[('Allow', 'GET')]) # don't allow POSTs.
+                abort(405, headers=[('Allow', 'GET')])  # don't allow POSTs.
     return decorator(wrapper)

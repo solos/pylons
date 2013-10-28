@@ -5,7 +5,7 @@ Pylons. SQLAlchemy 0.3.x users are recommended to migrate to SAContext
 Provides convenient access to SQLObject-managed and/or SQLAlchemy-managed
 databases.
 
-This module enables easy use of an SQLObject database by providing an 
+This module enables easy use of an SQLObject database by providing an
 auto-connect hub that will utilize the db uri string given in the Paste conf
 file called ``sqlobject.dburi``.
 
@@ -31,20 +31,20 @@ try:
     from sqlalchemy.ext import sessioncontext
 
     BOOL_OPTIONS = set([
-            "convert_unicode",
-            "echo",
-            "echo_pool",
-            "threaded",
-            "use_ansi",
-            "use_oids",
-            ])
+        "convert_unicode",
+        "echo",
+        "echo_pool",
+        "threaded",
+        "use_ansi",
+        "use_oids",
+    ])
 
     INT_OPTIONS = set([
-            "max_overflow",
-            "pool_size",
-            "pool_recycle",
-            "pool_timeout",
-            ])
+        "max_overflow",
+        "pool_size",
+        "pool_recycle",
+        "pool_timeout",
+    ])
 
     def app_scope():
         """Return the id keying the current database session's scope.
@@ -57,7 +57,7 @@ try:
             app_scope_id = str(id(pylons.config._current_obj()))
         except TypeError:
             app_scope_id = ''
-        log.debug("Returning %s as the database session scope id", 
+        log.debug("Returning %s as the database session scope id",
                   app_scope_id)
         return '%s|%i' % (app_scope_id, thread.get_ident())
 
@@ -97,14 +97,15 @@ try:
             engine = db_engines[engine_key] = \
                 sqlalchemy.create_engine(uri, **conf)
 
-        log.debug("Created engine using uri: %s with engine arguments %s", uri, conf)
+        log.debug("Created engine using uri: %s with engine arguments %s",
+                  uri, conf)
         return engine
 
     def get_engine_conf():
         """Returns a dict of SQLAlchemy engine configuration values
         from the Pylons config file values ``sqlalchemy.*``"""
         result = {}
-        for k,v in pylons.config.iteritems():
+        for k, v in pylons.config.iteritems():
             if not k.startswith('sqlalchemy.'):
                 continue
             k = k[11:]
@@ -115,7 +116,7 @@ try:
                     result[k] = int(v)
                 except ValueError:
                     reason = 'config sqlalchemy.%s is not an integer: %s'
-                    raise ValueError(reason % (k,v))
+                    raise ValueError(reason % (k, v))
             else:
                 result[k] = v
         return result
@@ -128,7 +129,7 @@ try:
 
         ``session_kwargs`` are passed to SQLAlchemy's ``create_session``
         function as keyword arguments.
-        
+
         If the uri's engine does not exist, it will be created and added to
         the engine cache.
         """
@@ -158,20 +159,20 @@ except:
 
 class AutoConnectHub(ConnectionHub):
     """Connects to the database once per thread.
-    
+
     The AutoConnectHub also provides convenient methods for managing
     transactions.
     """
     uri = None
     params = {}
-    
+
     def __init__(self, uri=None, pool_connections=True):
         if not uri:
             uri = pylons.config.get('sqlobject.dburi')
         self.uri = uri
         self.pool_connections = pool_connections
         ConnectionHub.__init__(self)
-    
+
     def getConnection(self):
         try:
             conn = self.threadingLocal.connection
@@ -201,7 +202,7 @@ class AutoConnectHub(ConnectionHub):
         if not hasattr(self.threadingLocal, "connection"):
             self.getConnection()
         return ConnectionHub.doInTransaction(self, func, *args, **kw)
-    
+
     def begin(self):
         """Starts a transaction."""
         conn = self.getConnection()
@@ -211,19 +212,19 @@ class AutoConnectHub(ConnectionHub):
             return
         self.threadingLocal.old_conn = conn
         self.threadingLocal.connection = conn.transaction()
-        
+
     def commit(self):
         """Commits the current transaction."""
         conn = self.threadingLocal.connection
         if isinstance(conn, Transaction):
             self.threadingLocal.connection.commit()
-    
+
     def rollback(self):
         """Rolls back the current transaction."""
         conn = self.threadingLocal.connection
         if isinstance(conn, Transaction) and not conn._obsolete:
             self.threadingLocal.connection.rollback()
-            
+
     def end(self):
         """Ends the transaction, returning to a standard connection."""
         conn = self.threadingLocal.connection
@@ -253,7 +254,7 @@ class PackageHub(object):
     configured via "packagename.dburi" in the Paste ini file
     settings. If there is no package DB URI configured, the
     default (provided by "sqlobject.dburi") is used.
-    
+
     The hub is not instantiated until an attempt is made to
     use the database.
 
@@ -266,7 +267,7 @@ class PackageHub(object):
         self.hub = None
         self.dburi = dburi
         self.pool_connections = pool_connections
-    
+
     def __get__(self, obj, type):
         if not self.hub:
             try:
@@ -274,23 +275,22 @@ class PackageHub(object):
             except UnconfiguredConnectionError, e:
                 raise AttributeError(str(e))
         return self.hub.__get__(obj, type)
-    
+
     def __set__(self, obj, type):
         if not self.hub:
             self.set_hub()
         return self.hub.__set__(obj, type)
-    
+
     def __getattr__(self, name):
         if not self.hub:
             self.set_hub()
         return getattr(self.hub, name)
-    
+
     def set_hub(self):
         dburi = self.dburi
         if not dburi:
             try:
-                dburi = pylons.config.get("%s.dburi" % \
-                                                   self.packagename)
+                dburi = pylons.config.get("%s.dburi" % self.packagename)
             except TypeError, e:
                 # No configuration is registered
                 raise UnconfiguredConnectionError(str(e))

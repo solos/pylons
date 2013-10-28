@@ -28,6 +28,7 @@ from pylons.i18n.translation import _get_translator
 
 pylonsapp = None
 
+
 class PylonsPlugin(nose.plugins.Plugin):
     """Nose plugin extension
 

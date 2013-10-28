@@ -13,6 +13,7 @@ except ImportError:
 
 __all__ = ['handle_mako_error']
 
+
 def handle_mako_error(context, exc):
     try:
         exc.is_mako_exception = True
@@ -22,6 +23,7 @@ def handle_mako_error(context, exc):
 
 # Legacy support for < 0.9.7 projects
 error_template = None
+
 
 def myghty_html_data(exc_value):
     """Format a Myghty exception as HTML"""

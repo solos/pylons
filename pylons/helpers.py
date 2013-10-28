@@ -11,6 +11,7 @@ __all__ = ['abort', 'etag_cache', 'log', 'redirect_to']
 warnings.warn('The pylons.helper module has moved to pylons.controllers.util; '
               'please update your imports.', DeprecationWarning, 2)
 
+
 def log(msg):
     """Deprecated: Use the logging module instead.
 
