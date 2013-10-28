@@ -88,18 +88,19 @@ PylonsHQ website in this browser.</p>
 <img src="{{prefix}}/media/pylons/img/pylons-powered-02.png" /></div>
 <div class="credits">Pylons version %s</div>"""
 
+
 class StaticJavascripts(object):
-    """Middleware for intercepting requests for WebHelpers' included 
+    """Middleware for intercepting requests for WebHelpers' included
     javascript files.
-    
+
     Triggered when PATH_INFO begins with '/javascripts/'.
-    
+
     """
     def __init__(self, **kwargs):
         from webhelpers.rails.asset_tag import javascript_path
         self.javascripts_app = \
             StaticURLParser(os.path.dirname(javascript_path), **kwargs)
-        
+
     def __call__(self, environ, start_response):
         if environ.get('PATH_INFO', '').startswith('/javascripts/'):
             log.debug("Handling Javascript URL (Starts with /javascripts/)")
@@ -110,18 +111,19 @@ class StaticJavascripts(object):
 
 report_libs = ['pylons', 'genshi', 'sqlalchemy']
 
+
 def ErrorHandler(app, global_conf, **errorware):
     """ErrorHandler Toggle
-    
+
     If debug is enabled, this function will return the app wrapped in
     the WebError ``EvalException`` middleware which displays
     interactive debugging sessions when a traceback occurs.
-    
+
     Otherwise, the app will be wrapped in the WebError
     ``ErrorMiddleware``, and the ``errorware`` dict will be passed into
     it. The ``ErrorMiddleware`` handles sending an email to the address
     listed in the .ini file, under ``email_to``.
-    
+
     """
     if 'error_template' in errorware:
         del errorware['error_template']
@@ -129,13 +131,13 @@ def ErrorHandler(app, global_conf, **errorware):
                       DeprecationWarning, 2)
 
     if asbool(global_conf.get('debug')):
-        footer = footer_html % (pylons.config.get('traceback_host', 
+        footer = footer_html % (pylons.config.get('traceback_host',
                                                   'pylonshq.com'),
                                 pylons.__version__)
         py_media = dict(pylons=media_path)
-        app = EvalException(app, global_conf, 
+        app = EvalException(app, global_conf,
                             templating_formatters=template_error_formatters,
-                            media_paths=py_media, head_html=head_html, 
+                            media_paths=py_media, head_html=head_html,
                             footer_html=footer,
                             libraries=report_libs)
     else:
@@ -150,7 +152,7 @@ def error_mapper(code, message, environ, global_conf=None, **kw):
         return
     else:
         environ['pylons.error_call'] = True
-    
+
     if global_conf is None:
         global_conf = {}
     codes = [401, 403, 404]
@@ -165,53 +167,55 @@ def error_mapper(code, message, environ, global_conf=None, **kw):
 
 class StatusCodeRedirect(object):
     """Internally redirects a request based on status code
-    
-    StatusCodeRedirect watches the response of the app it wraps. If the 
+
+    StatusCodeRedirect watches the response of the app it wraps. If the
     response is an error code in the errors sequence passed the request
     will be re-run with the path URL set to the path passed in.
-    
-    This operation is non-recursive and the output of the second 
+
+    This operation is non-recursive and the output of the second
     request will be used no matter what it is.
-    
-    Should an application wish to bypass the error response (ie, to 
-    purposely return a 401), set 
+
+    Should an application wish to bypass the error response (ie, to
+    purposely return a 401), set
     ``environ['pylons.status_code_redirect'] = True`` in the application.
-    
+
     """
     def __init__(self, app, errors=(400, 401, 403, 404),
                  path='/error/document'):
         """Initialize the ErrorRedirect
-        
+
         ``errors``
             A sequence (list, tuple) of error code integers that should
             be caught.
         ``path``
-            The path to set for the next request down to the 
-            application. 
-        
+            The path to set for the next request down to the
+            application.
+
         """
         self.app = app
         self.error_path = path
-        
+
         # Transform errors to str for comparison
         self.errors = tuple([str(x) for x in errors])
-    
+
     def __call__(self, environ, start_response):
         status, headers, app_iter, exc_info = call_wsgi_application(
             self.app, environ, catch_exc_info=True)
         if status[:3] in self.errors and \
-            'pylons.status_code_redirect' not in environ and self.error_path:
+                'pylons.status_code_redirect' not in environ and \
+                self.error_path:
             # Create a response object
             environ['pylons.original_response'] = Response(
                 status=status, headerlist=headers, app_iter=app_iter)
             environ['pylons.original_request'] = Request(environ)
-            
+
             # Create a new environ to avoid touching the original request data
             new_environ = environ.copy()
             new_environ['PATH_INFO'] = self.error_path
-            
-            newstatus, headers, app_iter, exc_info = call_wsgi_application(
-                    self.app, new_environ, catch_exc_info=True)
+
+            newstatus, headers, app_iter, exc_info = \
+                call_wsgi_application(self.app,
+                                      new_environ, catch_exc_info=True)
         start_response(status, headers, exc_info)
         return app_iter
 
@@ -219,7 +223,7 @@ class StatusCodeRedirect(object):
 def ErrorDocuments(app, global_conf=None, mapper=None, **kw):
     """Wraps the app in error docs using Paste RecursiveMiddleware and
     ErrorDocumentsMiddleware
-    
+
     All the args are passed directly into the ErrorDocumentsMiddleware. If no
     mapper is given, a default error_mapper is passed in.
     """

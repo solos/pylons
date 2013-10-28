@@ -28,6 +28,7 @@ __all__ = ['AttribSafeContextObj', 'ContextObj', 'PylonsContext',
 
 pylons_log = logging.getLogger(__name__)
 
+
 def func_move(name, moved_to='pylons.i18n'):
     return ("The %s function has moved to %s, please update your import "
             "statements to reflect the move" % (name, moved_to))
@@ -39,7 +40,7 @@ def deprecated(func, message):
         return func(*args, **kargs)
     try:
         deprecated_method.__name__ = func.__name__
-    except TypeError: # Python < 2.4
+    except TypeError:  # Python < 2.4
         pass
     deprecated_method.__doc__ = "%s\n\n%s" % (message, func.__doc__)
     return deprecated_method
@@ -49,6 +50,7 @@ get_lang = deprecated(pylons.i18n.get_lang, func_move('get_lang'))
 set_lang = deprecated(pylons.i18n.set_lang, func_move('set_lang'))
 _ = deprecated(pylons.i18n._, func_move('_'))
 
+
 # Avoid circular import and a double warning
 def log(*args, **kwargs):
     """Deprecated: Use the logging module instead.
@@ -57,6 +59,7 @@ def log(*args, **kwargs):
     """
     import pylons.helpers
     return pylons.helpers.log(*args, **kwargs)
+
 
 def get_prefix(environ, warn=True):
     """Deprecated: Use environ.get('SCRIPT_NAME', '') instead"""
@@ -86,6 +89,7 @@ def call_wsgi_application(application, environ, catch_exc_info=False):
     """
     captured = []
     output = []
+
     def start_response(status, headers, exc_info=None):
         if exc_info is not None and not catch_exc_info:
             raise exc_info[0], exc_info[1], exc_info[2]
@@ -128,11 +132,11 @@ def class_name_from_module_name(module_name):
 
 class PylonsContext(object):
     """Pylons context object
-    
+
     All the Pylons Stacked Object Proxies are also stored here, for use
     in generators and async based operation where the globals can't be
     used.
-    
+
     This object is attached in
     :class:`~pylons.controllers.core.WSGIController` instances as
     :attr:`~WSGIController._py_object`. For example::
@@ -141,7 +145,7 @@ class PylonsContext(object):
             def index(self):
                 pyobj = self._py_object
                 return "Environ is %s" % pyobj.request.environ
-    
+
     """
     pass
 
@@ -185,13 +189,13 @@ class PylonsTemplate(Template):
     summary = 'Pylons application template'
     egg_plugins = ['PasteScript', 'Pylons']
     vars = [
-        var('template_engine', 'mako/genshi/jinja2/etc: Template language', 
+        var('template_engine', 'mako/genshi/jinja2/etc: Template language',
             default='mako'),
         var('sqlalchemy', 'True/False: Include SQLAlchemy 0.5 configuration',
             default=False),
     ]
     ensure_names = ['description', 'author', 'author_email', 'url']
-    
+
     def pre(self, command, output_dir, vars):
         """Called before template is applied."""
         package_logger = vars['package']
@@ -225,7 +229,7 @@ class MinimalPylonsTemplate(PylonsTemplate):
     _template_dir = ('pylons', 'templates/minimal_project')
     summary = 'Pylons minimal application template'
     vars = [
-        var('template_engine', 'mako/genshi/jinja2/etc: Template language', 
+        var('template_engine', 'mako/genshi/jinja2/etc: Template language',
             default='mako'),
     ]
 
@@ -240,8 +244,8 @@ class PylonsInstaller(Installer):
         for the config file, given the provided variables.
         """
         modules = [line.strip()
-                    for line in self.dist.get_metadata_lines('top_level.txt')
-                    if line.strip() and not line.strip().startswith('#')]
+                   for line in self.dist.get_metadata_lines('top_level.txt')
+                   if line.strip() and not line.strip().startswith('#')]
         if not modules:
             print >> sys.stderr, 'No modules are listed in top_level.txt'
             print >> sys.stderr, \

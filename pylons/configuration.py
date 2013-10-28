@@ -30,8 +30,8 @@ default_template_engine = 'mako'
 request_defaults = dict(charset='utf-8', errors='replace',
                         decode_param_names=False, language='en-us')
 response_defaults = dict(content_type='text/html',
-                         charset='utf-8', errors='strict', 
-                         headers={'Cache-Control': 'no-cache', 
+                         charset='utf-8', errors='strict',
+                         headers={'Cache-Control': 'no-cache',
                                   'Pragma': 'no-cache'})
 
 log = logging.getLogger(__name__)
@@ -72,8 +72,8 @@ class PylonsConfig(DispatchingConfig):
         list will be configured as the default template engine. Each
         item in the list is a dict indicating how to configure the
         template engine with keys:
-        
-        ``engine``, ``template_root``, ``template_options``, and 
+
+        ``engine``, ``template_root``, ``template_options``, and
         ``alias``
     ``pylons.default_charset``
         Deprecated: Use the response_settings dict instead.
@@ -85,11 +85,11 @@ class PylonsConfig(DispatchingConfig):
     ``pylons.request_options``
         A dict of Content-Type related default settings for new
         instances of :class:`~pylons.controllers.util.Request`. May
-        contain the values ``charset`` and ``errors`` and 
+        contain the values ``charset`` and ``errors`` and
         ``decode_param_names``. Overrides the Pylons default values
         specified by the ``request_defaults`` dict.
     ``pylons.response_options``
-        A dict of Content-Type related default settings for new 
+        A dict of Content-Type related default settings for new
         instances of :class:`~pylons.controllers.util.Response`. May
         contain the values ``content_type``, ``charset`` and
         ``errors``. Overrides the Pylons default values specified by
@@ -97,7 +97,7 @@ class PylonsConfig(DispatchingConfig):
     ``routes.map``
         Mapper object used for Routing. Yes, it is possible to add
         routes after your application has started running.
-    
+
     """
     defaults = {
         'debug': False,
@@ -107,7 +107,7 @@ class PylonsConfig(DispatchingConfig):
                          'templates': [],
                          'static_files': None},
         'pylons.db_engines': {},
-        'pylons.environ_config': dict(session='beaker.session', 
+        'pylons.environ_config': dict(session='beaker.session',
                                       cache='beaker.cache'),
         'pylons.g': None,
         'pylons.h': None,
@@ -125,21 +125,23 @@ class PylonsConfig(DispatchingConfig):
             class FakeConfig(object):
                 def __init__(this, *args, **kwargs):
                     self.load_environment(*args, **kwargs)
+
                 def __getattr__(this, name):
                     return getattr(self, name)
+
                 def __setattr__(this, name, value):
                     setattr(self, name, value)
             return FakeConfig
         else:
             conf_dict = self.current_conf()
 
-            # Backwards compat for when the option is now in the dict, 
+            # Backwards compat for when the option is now in the dict,
             # and access was attempted via attribute
             for prefix in ('', 'pylons.', 'buffet.', 'routes.'):
                 full_name = prefix + name
                 if full_name in conf_dict:
-                    warnings.warn(pylons.legacy.config_attr_moved % \
-                                   (name, full_name), DeprecationWarning, 3)
+                    warnings.warn(pylons.legacy.config_attr_moved %
+                                  (name, full_name), DeprecationWarning, 3)
                     return conf_dict[full_name]
             if name == 'request_defaults':
                 return request_defaults
@@ -152,7 +154,7 @@ class PylonsConfig(DispatchingConfig):
                          strict_c=False, request_settings=None,
                          response_settings=None):
         """Load the environment options
-        
+
         Deprecated functionality for pre-0.9.6 projects.
         """
         warnings.warn(pylons.legacy.config_load_environment,
@@ -176,8 +178,8 @@ class PylonsConfig(DispatchingConfig):
         conf['pylons.strict_c'] = strict_c
 
         if default_charset:
-            warnings.warn(pylons.legacy.default_charset_warning % \
-                              dict(klass='Config', charset=default_charset),
+            warnings.warn(pylons.legacy.default_charset_warning %
+                          dict(klass='Config', charset=default_charset),
                           DeprecationWarning, 2)
             conf['pylons.response_options']['charset'] = default_charset
         self['environment_load'] = conf
@@ -211,9 +213,9 @@ class PylonsConfig(DispatchingConfig):
             config.init_app(global_conf, app_conf, package='yourproj')
 
             # Load additional template engines
-            kidopts = {'kid.assume_encoding':'utf-8', 
+            kidopts = {'kid.assume_encoding':'utf-8',
                        'kid.encoding':'utf-8'}
-            config.add_template_engine('kid', 'yourproj.kidtemplates', 
+            config.add_template_engine('kid', 'yourproj.kidtemplates',
                                        kidopts)
 
         Example of changing the default template engine:
@@ -228,35 +230,35 @@ class PylonsConfig(DispatchingConfig):
             old_default = config.template_engines.pop()
 
             # Load additional template engines
-            kidopts = {'kid.assume_encoding':'utf-8', 
+            kidopts = {'kid.assume_encoding':'utf-8',
                        'kid.encoding':'utf-8'}
-            config.add_template_engine('kid', 'yourproj.kidtemplates', 
+            config.add_template_engine('kid', 'yourproj.kidtemplates',
                                        kidopts)
 
             # Add old default as additional engine
             config.template_engines.append(old_default)
-        
+
         """
         if not options:
             options = self['buffet.template_options']
         config = dict(engine=engine, template_root=root,
-            template_options=options, alias=alias)
-        log.debug("Adding %s engine with alias %s and %s options", engine, 
+                      template_options=options, alias=alias)
+        log.debug("Adding %s engine with alias %s and %s options", engine,
                   alias, options)
         self['buffet.template_engines'].append(config)
 
     def init_app(self, global_conf, app_conf, package=None,
                  template_engine=default_template_engine, paths=None):
         """Initialize configuration for the application
-        
+
         .. note
-            This *must* be called at least once, as soon as possible 
+            This *must* be called at least once, as soon as possible
             tosetup all the configuration options.
-        
+
         ``global_conf``
             Several options are expected to be set for a Pylons web
-            application. They will be loaded from the global_config 
-            which has the main Paste options. If ``debug`` is not 
+            application. They will be loaded from the global_config
+            which has the main Paste options. If ``debug`` is not
             enabled as a global config option, the following option
             *must* be set:
 
@@ -264,7 +266,7 @@ class PylonsConfig(DispatchingConfig):
 
             The optional config options in this case are:
 
-            * smtp_server - The SMTP server to use, defaults to 
+            * smtp_server - The SMTP server to use, defaults to
               'localhost'
             * error_log - A logfile to write the error to
             * error_subject_prefix - The prefix of the error email
@@ -272,21 +274,21 @@ class PylonsConfig(DispatchingConfig):
             * from_address - Whom the error email should be from
         ``app_conf``
             Defaults supplied via the [app:main] section from the Paste
-            config file. ``load_config`` only cares about whether a 
+            config file. ``load_config`` only cares about whether a
             'prefix' option is set, if so it will update Routes to
             ensure URL's take that into account.
         ``package``
-            The name of the application package, to be stored in the 
+            The name of the application package, to be stored in the
             app_conf.
-        
+
         .. versionchanged:: 0.9.7
             ``template_engine`` is no longer required, and can be set
             to :data:`None` to avoid loading the default one.
-        
+
         ``template_engine``
             Declare the default template engine to setup. Choices are
             kid, genshi, mako (the default), and pylonsmyghty.
-        
+
         """
         log.debug("Initializing configuration, package: '%s'", package)
         conf = global_conf.copy()
@@ -308,17 +310,17 @@ class PylonsConfig(DispatchingConfig):
         if paths and 'root_path' in paths:
             warnings.warn(pylons.legacy.root_path, DeprecationWarning, 2)
             paths['root'] = paths['root_path']
-        
+
         log.debug("Pushing process configuration")
         self.push_process_config(conf)
         self.set_defaults(template_engine)
-    
+
     def set_defaults(self, template_engine):
         conf = self.current_conf()
-        
+
         # Load the MIMETypes with its default types
         MIMETypes.init()
-        
+
         # Ensure all the keys from defaults are present, load them if not
         for key, val in copy.deepcopy(PylonsConfig.defaults).iteritems():
             conf.setdefault(key, val)
@@ -332,7 +334,7 @@ class PylonsConfig(DispatchingConfig):
             if map:
                 map.prefix = prefix
                 map._created_regs = False
-        
+
         # Load the errorware configuration from the Paste configuration file
         # These all have defaults, and emails are only sent if configured and
         # if this application is running in production mode
@@ -342,15 +344,14 @@ class PylonsConfig(DispatchingConfig):
             errorware['debug'] = False
             errorware['error_email'] = conf.get('email_to')
             errorware['error_log'] = conf.get('error_log', None)
-            errorware['smtp_server'] = conf.get('smtp_server',
-                'localhost')
+            errorware['smtp_server'] = conf.get('smtp_server', 'localhost')
             errorware['error_subject_prefix'] = conf.get(
                 'error_subject_prefix', 'WebApp Error: ')
             errorware['from_address'] = conf.get(
                 'from_address', conf.get('error_email_from',
                                          'pylons@yourapp.com'))
-            errorware['error_message'] = conf.get('error_message',
-                'An internal server error occurred')
+            errorware['error_message'] = conf.get(
+                'error_message', 'An internal server error occurred')
 
         # Standard Pylons configuration directives for Myghty
         myghty_defaults = {}
@@ -359,8 +360,9 @@ class PylonsConfig(DispatchingConfig):
         myghty_defaults['raise_error'] = True
         myghty_defaults['output_encoding'] = \
             conf['pylons.response_options']['charset']
-        myghty_defaults['component_root'] = [{os.path.basename(path): path} \
-            for path in conf['pylons.paths']['templates']]
+        myghty_defaults['component_root'] = [
+            {os.path.basename(path): path} for path in
+            conf['pylons.paths']['templates']]
 
         # Merge additional globals
         myghty_defaults.setdefault('allow_globals',
@@ -374,7 +376,7 @@ class PylonsConfig(DispatchingConfig):
             myghty_defaults['data_dir'] = conf['myghty_data_dir']
         elif 'cache_dir' in conf:
             myghty_defaults['data_dir'] = os.path.join(conf['cache_dir'],
-                'templates')
+                                                       'templates')
 
         # Copy in some defaults
         if 'cache_dir' in conf:
@@ -431,13 +433,13 @@ class PylonsConfig(DispatchingConfig):
             self.add_template_engine(template_engine,
                                      conf['pylons.package'] + '.templates')
         elif template_engine == 'cheetah':
-            self.add_template_engine(template_engine, '%s.templates' % 
+            self.add_template_engine(template_engine, '%s.templates' %
                                      conf['pylons.package'])
-        
+
         log.debug("Loaded %s template engine as the default template "
                   "renderer", template_engine)
-        
-        conf['pylons.cache_dir'] = conf.pop('cache_dir', 
+
+        conf['pylons.cache_dir'] = conf.pop('cache_dir',
                                             conf['app_conf'].get('cache_dir'))
         # Save our errorware values
         conf['pylons.errorware'] = errorware

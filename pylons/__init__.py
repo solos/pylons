@@ -7,6 +7,7 @@ from pylons.legacy import h, jsonify, Response
 __all__ = ['app_globals', 'c', 'cache', 'config', 'g', 'request', 'response',
            'session', 'tmpl_context', 'url']
 
+
 def __figure_version():
     try:
         from pkg_resources import require
@@ -21,7 +22,7 @@ def __figure_version():
             return '(not installed)'
     except:
         return '(not installed)'
-        
+
 __version__ = __figure_version()
 
 app_globals = g = StackedObjectProxy(name="app_globals")
