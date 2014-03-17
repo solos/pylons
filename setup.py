@@ -52,7 +52,8 @@ Current Status
 Pylons %s described on this page is stable.
 
 There is also an unstable `develoment version
-<https://www.knowledgetap.com/hg/pylons-dev/archive/tip.tar.gz#egg=Pylons-dev>`_ of Pylons.
+<https://www.knowledgetap.com/hg/pylons-dev/archive/tip.tar.gz#egg=Pylons-dev>\
+`_ of Pylons.
 
 Download and Installation
 -------------------------
@@ -67,7 +68,8 @@ the `Pylons download page <http://pylonshq.com/download/>`_ .
 
 
 """ % version,
-    keywords='web wsgi lightweight framework sqlalchemy formencode mako templates',
+    keywords=
+    'web wsgi lightweight framework sqlalchemy formencode mako templates',
     license='BSD',
     author='Ben Bangert, Philip Jenvey, James Gardner',
     author_email='ben@groovie.org, pjenvey@underboss.org',
@@ -81,8 +83,10 @@ the `Pylons download page <http://pylonshq.com/download/>`_ .
         "Routes==1.10.3", "WebHelpers==0.6.4", "Beaker==1.2.2",
         "Paste==1.7.2", "PasteDeploy==1.3.3", "PasteScript==1.7.3",
         "FormEncode==1.2.1", "simplejson==2.0.8", "decorator==3.4.0",
-        "nose==1.3.0", "Mako==0.2.4", "WebOb==1.0.8", "WebError==0.10.1",
-        "WebTest>=1.1", "Tempita==0.2",
+        "nose==1.0.0", "Mako==0.2.4", "WebOb==0.9.6.1", "WebError==0.10.1",
+        "WebTest==1.1", "Tempita==0.2", "Pygments==0.7", "docutils==0.4",
+        "Cheetah==1.0", "TurboCheetah==0.9.5", "kid==0.9.5", "Genshi==0.6.1",
+        "Myghty==1.1"
     ],
     dependency_links=[
         "http://www.pylonshq.com/download/0.9.7"
@@ -98,7 +102,7 @@ the `Pylons download page <http://pylonshq.com/download/>`_ .
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    extras_require = {
+    extras_require={
         'cheetah': ["Cheetah>=1.0", "TurboCheetah>=0.9.5"],
         'myghty': ["Myghty>=1.1"],
         'kid': ["kid>=0.9", "TurboKid>=0.9.1"],
