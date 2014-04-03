@@ -85,8 +85,7 @@ the `Pylons download page <http://pylonshq.com/download/>`_ .
         "FormEncode==1.2.1", "simplejson==2.0.8", "decorator==3.4.0",
         "nose==1.0.0", "Mako==0.2.4", "WebOb==0.9.6.1", "WebError==0.10.1",
         "WebTest==1.1", "Tempita==0.2", "Pygments==0.7", "docutils==0.4",
-        "Cheetah==1.0", "TurboCheetah==0.9.5", "kid==0.9.5", "Genshi==0.6.1",
-        "Myghty==1.1"
+        "Genshi==0.6.1", "Myghty==1.1"
     ],
     dependency_links=[
         "http://www.pylonshq.com/download/0.9.7"
